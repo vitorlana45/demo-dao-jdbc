@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import db.DB;
 import db.DbException;
 import model.dao.SellerDao;
@@ -68,8 +69,7 @@ public class SellerDaoJDBC implements SellerDao {
 
 		try {
 			st = conn.prepareStatement("UPDATE seller "
-				    + "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " 
-				    + "WHERE Id = ?");
+					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " + "WHERE Id = ?");
 
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
@@ -89,8 +89,23 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM seller WHERE id = ?");
 
+			st.setInt(1, id);
+			int rows = st.executeUpdate();
+			
+			if (rows == 0 ) {
+				throw new DbException("Id not found");
+			}
+			
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		
+		}finally {
+			DB.closeStatement(st);
+		}
 	}
 
 	@Override
