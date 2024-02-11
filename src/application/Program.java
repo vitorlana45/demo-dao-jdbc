@@ -35,12 +35,22 @@ public class Program {
         	System.out.println(obj);
         }
         
-        System.out.println("\n=== TEST 3: Seller insert ====");
+        System.out.println("\n=== TEST 4: Seller insert ====");
         Seller newSeller = new Seller(null, "Fred", "Fred@gmail.com", new Date(), 4000.00, department);
         sellerDao.insert(newSeller);
         
         System.out.println("Inserted new id = " + newSeller.getId());
         
+        
+        
+        System.out.println("\n=== TEST 5: Seller insert ====");
+        // pegando o usuario Id 1 
+        seller = sellerDao.findById(1);
+        //setando alterando o nome dele 
+        seller.setName("jones horf");
+        //carregando os dados mudados
+        sellerDao.updated(seller);
+        System.out.println("Updated completed");
     
     }
 }
