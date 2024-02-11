@@ -102,8 +102,46 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+							"SELECT seller.*,department.Name as DepName " 
+							+ "FROM seller INNER JOIN department "
+							+ "ON seller.DepartmentId = department.Id " 
+							+ "ORDER BY Name");
+
+		
+			rs = st.executeQuery();
+
+			List<Seller> list = new ArrayList<>();
+			Map<Integer, Department> map = new HashMap<>();
+
+			while (rs.next()) { // if rs for linha nula eu pulo e retorno null se nao, entra na condição
+
+				Department dep = map.get(rs.getInt("DepartmentId"));
+
+				if (dep == null) {
+					dep = instantiateDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+
+				Seller obj = instantiateSeller(rs, dep);
+				list.add(obj);
+
+			}
+			return list;
+
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+			// nao vou fechar a conexão com o banco pra poder fazer outras operações se
+			// necessário
+			// no programa princial eu vou fechar a conexão
+		}
 	}
 
 	@Override
@@ -113,27 +151,30 @@ public class SellerDaoJDBC implements SellerDao {
 		ResultSet rs = null;
 		try {
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "WHERE DepartmentId = ? " + "ORDER BY Name");
+							"SELECT seller.*,department.Name as DepName " 
+							+ "FROM seller INNER JOIN department "
+							+ "ON seller.DepartmentId = department.Id " 
+							+ "WHERE DepartmentId = ? " 
+							+ "ORDER BY Name");
 
 			st.setInt(1, department.getId());
 			rs = st.executeQuery();
-			
+
 			List<Seller> list = new ArrayList<>();
 			Map<Integer, Department> map = new HashMap<>();
 
 			while (rs.next()) { // if rs for linha nula eu pulo e retorno null se nao, entra na condição
-				
+
 				Department dep = map.get(rs.getInt("DepartmentId"));
-			
-				if(dep == null) {
+
+				if (dep == null) {
 					dep = instantiateDepartment(rs);
 					map.put(rs.getInt("DepartmentId"), dep);
 				}
-				
+
 				Seller obj = instantiateSeller(rs, dep);
 				list.add(obj);
-				
+
 			}
 			return list;
 
