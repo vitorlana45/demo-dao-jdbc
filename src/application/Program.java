@@ -46,7 +46,7 @@ public class Program {
         
         
         System.out.println("\n=== TEST 5: Seller update ====");
-        // pegando o usuario Id 1 
+        // pegando o usuario Id 1 6
         seller = sellerDao.findById(1);
         //setando alterando o nome dele 
         seller.setName("jones horf");
